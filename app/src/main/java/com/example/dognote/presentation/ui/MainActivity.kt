@@ -1,5 +1,6 @@
 package com.example.dognote.presentation.ui
 
+import com.example.dognote.presentation.adapters.DogBreedAdapter
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -9,9 +10,10 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.dognote.data.models.DogBreed
 import com.example.dognote.R
+import com.example.dognote.data.api.RetrofitClient
 import com.example.dognote.databinding.ActivityMainBinding
-import com.example.dognote.presentation.adapters.DogBreedAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
