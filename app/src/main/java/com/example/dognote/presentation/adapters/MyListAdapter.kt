@@ -7,6 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.dognote.R
+import com.example.dognote.presentation.ui.DogDetailsActivity
+import com.example.dognote.data.models.DogNote
+import com.example.dognote.databinding.ItemDogBreedBinding
+
 
 class MyListAdapter(
     private val context: Context,
