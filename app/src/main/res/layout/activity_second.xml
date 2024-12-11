@@ -40,7 +40,6 @@
         android:hint="Dog's nickname"
         android:visibility="gone" />
 
-    <!-- Кнопка "Сохранить" -->
     <Button
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"

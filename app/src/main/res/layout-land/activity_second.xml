@@ -4,14 +4,12 @@
     android:orientation="horizontal"
     android:padding="16dp">
 
-    <!-- Контейнер для текста и изображения -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_weight="1">
 
-        <!-- Название породы над изображением -->
         <TextView
             android:id="@+id/dog_breed_name"
             android:layout_width="wrap_content"
@@ -21,7 +19,6 @@
             android:layout_gravity="center"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Изображение собаки -->
         <ImageView
             android:id="@+id/dogImage"
             android:layout_width="match_parent"
@@ -30,7 +27,6 @@
             android:adjustViewBounds="true"/>
     </LinearLayout>
 
-    <!-- Контейнер для полей ввода и кнопки справа -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"

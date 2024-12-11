@@ -48,7 +48,6 @@
             android:visibility="visible"
             android:layout_marginTop="16dp"/>
 
-        <!-- Container for edit and delete icons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,7 +64,6 @@
                 android:layout_gravity="start"
                 android:layout_marginEnd="16dp" />
 
-            <!-- Delete icon on the right -->
             <ImageView
                 android:id="@+id/delete_icon"
                 android:layout_width="wrap_content"
