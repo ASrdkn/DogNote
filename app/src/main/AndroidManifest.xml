@@ -23,7 +23,7 @@
             android:name=".presentation.ui.MainActivity"
             android:label="DogNote"
             android:exported="true"
-            android:theme="@style/Theme.Dogs">
+            android:theme="@style/Theme.DogNote">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
