@@ -14,9 +14,10 @@ import com.example.dognote.presentation.ui.SecondActivity
 
 // Адаптер для RecyclerView, который отображает элементы списка пород собак
 class DogBreedAdapter(
-    private val context: Context, // Контекст для запуска активностей
-    private val dogItems: List<DogBreed> // Список элементов, которые будут отображаться (только породы собак)
+    private val context: Context // Контекст для запуска активностей
 ) : RecyclerView.Adapter<DogBreedAdapter.DogBreedViewHolder>() {
+
+    private var dogItems: List<DogBreed> = listOf()
 
     // Внутренний класс для привязки одного элемента (ViewHolder)
     inner class DogBreedViewHolder(private val binding: ItemDogBreedBinding) :
@@ -57,4 +58,10 @@ class DogBreedAdapter(
 
     // Метод для получения количества элементов в списке
     override fun getItemCount(): Int = dogItems.size
+
+    // Метод для обновления данных адаптера
+    fun submitList(list: List<DogBreed>) {
+        dogItems = list
+        notifyDataSetChanged() // Уведомляем адаптер, что данные изменились
+    }
 }
