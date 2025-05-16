@@ -1,36 +1,37 @@
 package com.example.dognote.presentation.ui
 
-import com.example.dognote.presentation.adapters.DogBreedAdapter
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.dognote.data.models.DogBreed
+import com.example.dognote.presentation.adapters.DogBreedAdapter
 import com.example.dognote.R
-import com.example.dognote.data.api.RetrofitClient
 import com.example.dognote.databinding.ActivityMainBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.dognote.presentation.viewmodel.DogNoteViewModel
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding //Инициализация ViewBinding
+
+    private lateinit var binding: ActivityMainBinding // Инициализация ViewBinding
     private lateinit var dogBreedAdapter: DogBreedAdapter
+    private val dogNoteViewModel: DogNoteViewModel by viewModels() // Используем ViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater) //Инициализация binding
-        setContentView(binding.root) //Установка корневого представления
+        binding = ActivityMainBinding.inflate(layoutInflater) // Инициализация binding
+        setContentView(binding.root) // Установка корневого представления
 
-        //Настройка toolbar
+        // Настройка toolbar
         setSupportActionBar(binding.toolbar)
-
-        //Боковое меню управление
+        supportActionBar?.title = "Main"
+        // Боковое меню управление
         val toggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, binding.toolbar,
             R.string.navigation_drawer_open,
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        //Элементы бокового меню
+        // Элементы бокового меню
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_my_list -> {
@@ -49,17 +50,20 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_exit -> {
                     finish()
-                    System.exit(0)
-                    true
+                    exitProcess(0)
                 }
                 else -> false
             }
         }
+        binding.navigationView.menu.findItem(R.id.nav_main).isVisible = false
         setupRecyclerView()
-        fetchDogBreeds()
+        setupObserver()
+
+        // Загружаем данные о породах собак
+        dogNoteViewModel.fetchDogBreeds() // Загружаем данные с API
     }
 
-    //LayoutManager в зависимости от ориентации
+    // Настройка RecyclerView в зависимости от ориентации
     private fun setupRecyclerView() {
         val layoutManager = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // Горизонтальная ориентация: 4 колонки
@@ -69,41 +73,34 @@ class MainActivity : AppCompatActivity() {
             LinearLayoutManager(this)
         }
         binding.recyclerView.layoutManager = layoutManager
+        dogBreedAdapter = DogBreedAdapter(this)
+        binding.recyclerView.adapter = dogBreedAdapter
     }
 
-    // Загрузка данных из API
-    private fun fetchDogBreeds() {
-        val apiKey = "live_ejKtuMsWVvvZRY9iJMKAGMnDQUFEvUR78gsJe1TnZGPtd2UzY60eHgDo2Co5HxDO"
-        RetrofitClient.dogApiService.getDogBreeds(apiKey).enqueue(object :
-            Callback<List<DogBreed>> {
-            override fun onResponse(call: Call<List<DogBreed>>, response: Response<List<DogBreed>>) {
-                if (response.isSuccessful) {
-                    response.body()?.let { dogBreeds ->
-                        dogBreedAdapter = DogBreedAdapter(this@MainActivity, dogBreeds)
-                        binding.recyclerView.adapter = dogBreedAdapter // Используем binding для доступа к RecyclerView
-                    }
-                } else {
-                    Toast.makeText(this@MainActivity, "Ошибка получения данных: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
-                }
-            }
-            override fun onFailure(call: Call<List<DogBreed>>, t: Throwable) {
-                Toast.makeText(this@MainActivity, "Ошибка: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
+    // Подписка на изменения в LiveData
+    private fun setupObserver() {
+        // Получаем данные через ViewModel и обновляем адаптер
+        dogNoteViewModel.dogBreeds.observe(this, Observer { dogBreeds ->
+            dogBreedAdapter.submitList(dogBreeds) // Обновление адаптера с новыми данными
+        })
+        // Подписка на ошибки из ViewModel
+        dogNoteViewModel.error.observe(this, Observer { errorMessage ->
+            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show() // Показываем ошибку
         })
     }
 
+    // Перенастройка layoutmanager при изменении ориентации
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        setupRecyclerView()
+    }
+    // Открытие бокового меню при нажатии
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == android.R.id.home) {
-            binding.drawerLayout.openDrawer(binding.navigationView) //Открытие бокового меню
+            binding.drawerLayout.openDrawer(binding.navigationView) // Открытие бокового меню
             true
         } else {
             super.onOptionsItemSelected(item)
         }
-    }
-
-    //Перенастройка layoutmanager при изменении ориентации
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        setupRecyclerView()
     }
 }
