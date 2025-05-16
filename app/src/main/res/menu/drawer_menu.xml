@@ -4,7 +4,10 @@
         android:id="@+id/nav_my_list"
         android:title="My list"
         android:icon="@drawable/ic_list" />
-
+    <item
+        android:id="@+id/nav_main"
+        android:title="Main"
+        android:icon="@drawable/ic_main" />
     <item
         android:id="@+id/nav_exit"
         android:title="Exit"
