@@ -3,18 +3,18 @@ package com.example.dognote.presentation.ui
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
-import com.example.dognote.data.repository.AppDatabase
 import com.example.dognote.data.models.DogNote
 import com.example.dognote.databinding.ActivitySecondBinding
-import kotlinx.coroutines.launch
+import com.example.dognote.presentation.viewmodel.SecondActivityViewModel
 
 class SecondActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySecondBinding
-    private lateinit var database: AppDatabase
+    private val secondActivityViewModel: SecondActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,9 +22,6 @@ class SecondActivity : AppCompatActivity() {
         // Инициализация ViewBinding
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Инициализация бд
-        database = AppDatabase.getDatabase(this)
 
         // Получение данных
         val dogBreedName = intent.getStringExtra("DOG_BREED_NAME")
@@ -47,19 +44,24 @@ class SecondActivity : AppCompatActivity() {
 
             // Сохранение заметки в базу данных
             if (dogBreedName != null) {
-                lifecycleScope.launch {
-                    val dogNote = DogNote(
-                        breedName = dogBreedName,
-                        note = noteText,
-                        sawDog = sawDog,
-                        nickname = dogNickname,
-                        imageUrl = dogImageUrl
-                    )
-                    database.dogNoteDao().insertDogNote(dogNote)
-
-                    Toast.makeText(this@SecondActivity, "Заметка сохранена", Toast.LENGTH_SHORT).show()
-                }
+                val dogNote = DogNote(
+                    breedName = dogBreedName,
+                    note = noteText,
+                    sawDog = sawDog,
+                    nickname = dogNickname,
+                    imageUrl = dogImageUrl
+                )
+                secondActivityViewModel.saveDogNote(dogNote)
             }
         }
+
+        // Подписка на статус сохранения
+        secondActivityViewModel.saveStatus.observe(this, Observer { message ->
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            if (message == "Заметка сохранена") {
+                // Закрытие активити и возвращение на предыдущую
+                finish()
+            }
+        })
     }
 }
