@@ -23,9 +23,9 @@ class SecondActivityViewModel(application: Application) : AndroidViewModel(appli
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 database.dogNoteDao().insertDogNote(dogNote)
-                _saveStatus.postValue("Заметка сохранена")
+                _saveStatus.postValue("The note is saved")
             } catch (e: Exception) {
-                _saveStatus.postValue("Ошибка при сохранении")
+                _saveStatus.postValue("Error when saving")
             }
         }
     }
