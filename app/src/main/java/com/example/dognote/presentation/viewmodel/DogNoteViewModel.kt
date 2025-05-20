@@ -40,12 +40,12 @@ class DogNoteViewModel(application: Application) : AndroidViewModel(application)
                     // Когда данные получены, обновляем LiveData
                     _dogBreeds.postValue(response.body())
                 }  else {
-                    _error.postValue("Ошибка при получении данных") // Обновляем LiveData с ошибкой
+                    _error.postValue("Error when receiving data") // Обновляем LiveData с ошибкой
                 }
             }
 
             override fun onFailure(call: Call<List<DogBreed>>, t: Throwable) {
-                _error.postValue("Ошибка: ${t.message}")
+                _error.postValue("Error: ${t.message}")
             }
         })
     }
