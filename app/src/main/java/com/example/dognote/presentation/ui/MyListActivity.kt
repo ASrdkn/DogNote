@@ -43,13 +43,13 @@ class MyListActivity : AppCompatActivity() {
         // Обработка кликов по пунктам бокового меню
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_main -> { // Переход в MainActivity
+                R.id.nav_main -> {
                     startActivity(Intent(this, MainActivity::class.java))
                     binding.drawerLayout.closeDrawers()
                     true
                 }
-                R.id.nav_exit -> { // Завершить приложение
-                    finish()
+                R.id.nav_exit -> {
+                    finishAffinity();
                     exitProcess(0)
                 }
                 else -> false
@@ -74,9 +74,9 @@ class MyListActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         // Настройка RecyclerView в зависимости от ориентации экрана
         val layoutManager = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            GridLayoutManager(this, 4) // 4 колонки для горизонтальной ориентации
+            GridLayoutManager(this, 4)
         } else {
-            GridLayoutManager(this, 1) // 1 колонка для вертикальной ориентации
+            GridLayoutManager(this, 1)
         }
 
         binding.recyclerView.layoutManager = layoutManager
