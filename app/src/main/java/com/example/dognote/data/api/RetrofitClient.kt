@@ -1,6 +1,5 @@
 package com.example.dognote.data.api
 
-import com.example.dognote.data.api.DogApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
