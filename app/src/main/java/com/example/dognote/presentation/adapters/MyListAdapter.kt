@@ -11,7 +11,6 @@ import com.example.dognote.presentation.ui.DogDetailsActivity
 import com.example.dognote.data.models.DogNote
 import com.example.dognote.databinding.ItemDogBreedBinding
 
-
 class MyListAdapter(
     private val context: Context,
     private val dogNotes: List<DogNote>
