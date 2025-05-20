@@ -3,11 +3,11 @@ package com.example.dognote.presentation.ui
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,19 +19,21 @@ import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding // Инициализация ViewBinding
+    private lateinit var binding: ActivityMainBinding
     private lateinit var dogBreedAdapter: DogBreedAdapter
-    private val dogNoteViewModel: DogNoteViewModel by viewModels() // Используем ViewModel
+    private val dogNoteViewModel: DogNoteViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater) // Инициализация binding
-        setContentView(binding.root) // Установка корневого представления
 
-        // Настройка toolbar
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Настройка тулбара
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = "Main"
-        // Боковое меню управление
+
+        // Управление боковым меню
         val toggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, binding.toolbar,
             R.string.navigation_drawer_open,
@@ -48,30 +50,40 @@ class MainActivity : AppCompatActivity() {
                     binding.drawerLayout.closeDrawers()
                     true
                 }
+
                 R.id.nav_exit -> {
-                    finish()
+                    finishAffinity()
                     exitProcess(0)
                 }
+
                 else -> false
             }
         }
         binding.navigationView.menu.findItem(R.id.nav_main).isVisible = false
+
+        // Настройка RecyclerView
         setupRecyclerView()
+        // Настройка наблюдателей
         setupObserver()
 
         // Загружаем данные о породах собак
-        dogNoteViewModel.fetchDogBreeds() // Загружаем данные с API
+        dogNoteViewModel.fetchDogBreeds()
+
+        // Обработка клика по кнопке поиска
+        binding.toolbar.findViewById<AppCompatImageView>(R.id.action_search).setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     // Настройка RecyclerView в зависимости от ориентации
     private fun setupRecyclerView() {
-        val layoutManager = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // Горизонтальная ориентация: 4 колонки
-            GridLayoutManager(this, 4)
-        } else {
-            // Вертикальная ориентация: 1 колонка
-            LinearLayoutManager(this)
-        }
+        val layoutManager =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                GridLayoutManager(this, 4)
+            } else {
+                LinearLayoutManager(this)
+            }
         binding.recyclerView.layoutManager = layoutManager
         dogBreedAdapter = DogBreedAdapter(this)
         binding.recyclerView.adapter = dogBreedAdapter
@@ -79,11 +91,10 @@ class MainActivity : AppCompatActivity() {
 
     // Подписка на изменения в LiveData
     private fun setupObserver() {
-        // Получаем данные через ViewModel и обновляем адаптер
         dogNoteViewModel.dogBreeds.observe(this, Observer { dogBreeds ->
             dogBreedAdapter.submitList(dogBreeds) // Обновление адаптера с новыми данными
         })
-        // Подписка на ошибки из ViewModel
+
         dogNoteViewModel.error.observe(this, Observer { errorMessage ->
             Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show() // Показываем ошибку
         })
@@ -93,14 +104,5 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         setupRecyclerView()
-    }
-    // Открытие бокового меню при нажатии
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == android.R.id.home) {
-            binding.drawerLayout.openDrawer(binding.navigationView) // Открытие бокового меню
-            true
-        } else {
-            super.onOptionsItemSelected(item)
-        }
     }
 }
