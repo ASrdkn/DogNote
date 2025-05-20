@@ -1,6 +1,7 @@
 package com.example.dognote.presentation.ui
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -22,6 +23,12 @@ class SecondActivity : AppCompatActivity() {
         // Инициализация ViewBinding
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Настройка тулбара
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.title = "Creating a note"
 
         // Получение данных
         val dogBreedName = intent.getStringExtra("DOG_BREED_NAME")
@@ -58,10 +65,20 @@ class SecondActivity : AppCompatActivity() {
         // Подписка на статус сохранения
         secondActivityViewModel.saveStatus.observe(this, Observer { message ->
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            if (message == "Заметка сохранена") {
-                // Закрытие активити и возвращение на предыдущую
+            if (message == "The note is saved") {
                 finish()
             }
         })
+    }
+
+    // Обработка нажатия на стрелку "назад"
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }
