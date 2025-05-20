@@ -1,6 +1,7 @@
 package com.example.dognote.presentation.ui
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -28,6 +29,12 @@ class DogDetailsActivity : AppCompatActivity() {
         binding = ActivityDogDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Настройка тулбара
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.title = "A note"
+
         // Получение данных о собаке
         currentDogId = intent.getIntExtra("DOG_ID", -1)
 
@@ -40,7 +47,6 @@ class DogDetailsActivity : AppCompatActivity() {
 
         // Наблюдение за изменениями в данных
         dogDetailsViewModel.dogNote.observe(this, Observer { dogNote ->
-            // Проверка на null перед вызовом метода displayDogDetails
             dogNote?.let {
                 displayDogDetails(it)
             } ?: run {
@@ -49,11 +55,9 @@ class DogDetailsActivity : AppCompatActivity() {
         })
 
         // Наблюдение за статусом операции (сохранение или удаление)
-        dogDetailsViewModel.status.observe(this, Observer { message ->
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            if (message == "Заметка обновлена" || message == "Запись удалена") {
-                finish()
-            }
+        dogDetailsViewModel.status.observe(this, Observer { status ->
+            Toast.makeText(this, status, Toast.LENGTH_SHORT).show()
+            finish()
         })
 
         // Обработка редактирования
@@ -85,12 +89,10 @@ class DogDetailsActivity : AppCompatActivity() {
             dogNicknameInput.setText(dogNote.nickname)
             sawDogCheckBox.isChecked = dogNote.sawDog
 
-            // Видимость поля ввода клички
             dogNicknameInput.visibility = if (dogNote.sawDog) View.VISIBLE else View.GONE
 
             Glide.with(this@DogDetailsActivity).load(dogNote.imageUrl).into(dogImage)
 
-            // Отключение редактирования при просмотре
             noteInput.isEnabled = false
             dogNicknameInput.isEnabled = false
             sawDogCheckBox.isEnabled = false
@@ -124,5 +126,16 @@ class DogDetailsActivity : AppCompatActivity() {
         )
 
         dogDetailsViewModel.saveDogNote(updatedDogNote)
+    }
+
+    // Обработка нажатия на стрелку "назад"
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }
