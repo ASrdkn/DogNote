@@ -20,8 +20,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
     fun searchDogs(query: String) {
         val apiKey = "live_ejKtuMsWVvvZRY9iJMKAGMnDQUFEvUR78gsJe1TnZGPtd2UzY60eHgDo2Co5HxDO"
-        RetrofitClient.dogApiService.searchDogs(apiKey, query).enqueue(object :
-            Callback<List<DogBreed>> {
+        RetrofitClient.dogApiService.searchDogs(apiKey, query).enqueue(object : Callback<List<DogBreed>> {
             override fun onResponse(call: Call<List<DogBreed>>, response: Response<List<DogBreed>>) {
                 if (response.isSuccessful) {
                     _dogBreeds.postValue(response.body())
