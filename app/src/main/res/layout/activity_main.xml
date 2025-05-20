@@ -17,7 +17,16 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/action_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_menu_search"
+                android:layout_gravity="end|center_vertical"
+                android:padding="8dp" />
+        </androidx.appcompat.widget.Toolbar>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -25,6 +34,7 @@
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar"
             android:paddingTop="8dp"/>
+
     </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView
