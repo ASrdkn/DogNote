@@ -15,6 +15,7 @@
         tools:targetApi="31">
         <activity android:name=".presentation.ui.DogDetailsActivity" />
         <activity android:name=".presentation.ui.MyListActivity" />
+        <activity android:name=".presentation.ui.SearchActivity" />
         <activity
             android:name=".presentation.ui.MainActivity"
             android:label="DogNote"
@@ -22,7 +23,6 @@
             android:theme="@style/Theme.DogNote">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
