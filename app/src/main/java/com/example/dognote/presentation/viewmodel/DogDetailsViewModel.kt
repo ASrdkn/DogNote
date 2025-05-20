@@ -18,7 +18,7 @@ class DogDetailsViewModel(application: Application) : AndroidViewModel(applicati
     private val _dogNote = MutableLiveData<DogNote?>() // Обновляем на Nullable
     val dogNote: LiveData<DogNote?> get() = _dogNote
 
-    // LiveData для статуса операции (например, успешное сохранение)
+    // LiveData для статуса операции
     private val _status = MutableLiveData<String>()
     val status: LiveData<String> get() = _status
 
@@ -29,25 +29,28 @@ class DogDetailsViewModel(application: Application) : AndroidViewModel(applicati
             if (dogNote != null) {
                 _dogNote.postValue(dogNote)
             } else {
-                _status.postValue("Ошибка загрузки данных о собаке")
+                _status.postValue("Error uploading dog data")
             }
         }
     }
 
-    // Удаление заметки о собаке
+    // Добавление LiveData для завершения операции
+    private val _isOperationComplete = MutableLiveData<Boolean>()
+
+    // В методах сохранения и удаления заметок:
     fun deleteDogNote(dogId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             dogNoteDao.deleteDogNoteById(dogId)
-            _status.postValue("Запись удалена")
+            _status.postValue("Note deleted")
+            _isOperationComplete.postValue(true)
         }
     }
 
-    // Сохранение обновленных данных о собаке
     fun saveDogNote(updatedDogNote: DogNote) {
         viewModelScope.launch(Dispatchers.IO) {
             dogNoteDao.updateDogNote(updatedDogNote)
-            _status.postValue("Заметка обновлена")
+            _status.postValue("The note has been updated")
+            _isOperationComplete.postValue(true)
         }
     }
 }
-
